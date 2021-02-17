@@ -156,6 +156,7 @@ class AutoSklearn2Classifier(AutoSklearnClassifier):
     def __init__(
         self,
         time_left_for_this_task: int = 3600,
+        per_run_time_limit=None,
         ensemble_size: int = 50,
         ensemble_nbest: Union[float, int] = 50,
         max_models_on_disc: int = 50,
@@ -182,6 +183,13 @@ class AutoSklearn2Classifier(AutoSklearnClassifier):
             Time limit in seconds for the search of appropriate
             models. By increasing this value, *auto-sklearn* has a higher
             chance of finding better models.
+
+        per_run_time_limit : int, optional (default=1/10 of time_left_for_this_task)
+            Time limit for a single call to the machine learning model.
+            Model fitting will be terminated if the machine learning
+            algorithm runs over the time limit. Set this value high enough so
+            that typical machine learning algorithms can be fit on the
+            training data.
 
         ensemble_size : int, optional (default=50)
             Number of models added to the ensemble built by *Ensemble
@@ -255,7 +263,7 @@ class AutoSklearn2Classifier(AutoSklearnClassifier):
 
         smac_scenario_args : dict, optional (None)
             Additional arguments inserted into the scenario of SMAC. See the
-            `SMAC documentation 
+            `SMAC documentation
             <https://automl.github.io/SMAC3/master/options.html?highlight=scenario
             #scenario>`_
             for a list of available arguments.
@@ -272,7 +280,7 @@ class AutoSklearn2Classifier(AutoSklearnClassifier):
             If None is provided, a default metric is selected depending on the task.
 
         scoring_functions : List[Scorer], optional (None)
-            List of scorers which will be calculated for each pipeline and results will be 
+            List of scorers which will be calculated for each pipeline and results will be
             available via ``cv_results``
 
         load_models : bool, optional (True)
@@ -295,6 +303,7 @@ class AutoSklearn2Classifier(AutoSklearnClassifier):
         include_preprocessors = ["no_preprocessing"]
         super().__init__(
             time_left_for_this_task=time_left_for_this_task,
+            per_run_time_limit=per_run_time_limit,
             initial_configurations_via_metalearning=0,
             ensemble_size=ensemble_size,
             ensemble_nbest=ensemble_nbest,

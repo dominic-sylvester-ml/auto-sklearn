@@ -660,3 +660,22 @@ def test_check_estimator_signature(class_):
     estimator = class_()
     for expected in list(inspect.signature(class_).parameters):
         assert hasattr(estimator, expected)
+
+
+def test_check_askl2_same_arguments_as_askl():
+    # In case a new attribute is created, make sure it is there also in
+    # ASKL2
+    extra_arguments = list(set(
+        inspect.getfullargspec(AutoSklearnEstimator.__init__).args) - set(
+            inspect.getfullargspec(AutoSklearn2Classifier.__init__).args))
+    expected_extra_args = ['exclude_estimators',
+                           'include_preprocessors',
+                           'resampling_strategy_arguments',
+                           'exclude_preprocessors',
+                           'include_estimators',
+                           'get_smac_object_callback',
+                           'initial_configurations_via_metalearning',
+                           'resampling_strategy',
+                           'metadata_directory']
+    unexpected_args = set(extra_arguments) - set(expected_extra_args)
+    assert len(unexpected_args) == 0, unexpected_args
